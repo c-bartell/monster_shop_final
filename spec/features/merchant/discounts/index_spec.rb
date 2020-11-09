@@ -37,6 +37,12 @@ describe 'Bulk Discounts Index Page:' do
           end
         end
       end
+
+      it 'I see a link to create a new bulk discount' do
+        click_link("Create Bulk Discount")
+        
+        expect(current_path).to eq('/merchant/discounts/new')
+      end
     end
   end
 end
