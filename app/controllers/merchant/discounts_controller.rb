@@ -8,10 +8,14 @@ class Merchant::DiscountsController < Merchant::BaseController
   end
 
   def create
-    discount = current_user.merchant.discounts.new(discount_params)
-    discount.save
-
-    redirect_to merchant_discounts_path
+    @discount = current_user.merchant.discounts.new(discount_params)
+    if @discount.save
+      redirect_to merchant_discounts_path
+    else
+      # binding.pry
+      flash[:errors] = @discount.errors.full_messages.to_sentence.capitalize + '.'
+      render :new
+    end
   end
 
   private
