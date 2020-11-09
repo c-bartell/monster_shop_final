@@ -41,6 +41,21 @@ describe 'New Bulk Discount Page:' do
         end
       end
 
+      it 'If I fill out the form with invalid percent or bulk_amount, or if I leave a field blank, I am returned to the form, where I see an error message and the data that I filled in' do
+        percent = { too_high: 100, too_low: 0, negative: -1, valid: 5 }
+        bulk_amount = { too_low: 0, negative: -1, valid: 20 }
+
+        # All fields blank
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("Percent can't be blank, percent is not a number, bulk amount can't be blank, and bulk amount is not a number.")
+
+        # Invalid percent (including non numbers)
+
+
+        # Invalid bulk_amount (including non numbers)
+
+      end
       # After test for working form and create action, ad sad path for invalid :percent and :bulk_amount, flash messages, form remaining filled out
       # Should discounts be unique by amount for every merchant?
     end
