@@ -19,12 +19,30 @@ describe 'New Bulk Discount Page:' do
       end
 
       it 'I see a form to create a new bulk discount' do
-        expect(page).to have_field(:percent)
-        expect(page).to have_field(:bulk_amount)
-        expect(page).to have_button(:create_discount)
+
+        expect(page).to have_field(:discount_percent)
+        expect(page).to have_field(:discount_bulk_amount)
+        expect(page).to have_button('Create Bulk Discount')
       end
 
-      # After test for working form and create action, add sad path for invalid :percent and :bulk_amount, flash messages, form remaining filled out
+      it 'When I correctly fill out and submit the form, I am taken back to the discounts index, where I see the new discount' do
+        discount_data = { percent: 5, bulk_amount: 20 }
+
+        fill_in :discount_percent, with: discount_data[:percent]
+        fill_in :discount_bulk_amount, with: discount_data[:bulk_amount]
+        click_button 'Create Bulk Discount'
+
+        new_discount_id = Discount.last.id
+
+        expect(current_path).to eq(merchant_discounts_path)
+
+        within "#discount-#{new_discount_id}" do
+          expect(page).to have_content("#{discount_data[:percent]}% off quantities of #{discount_data[:bulk_amount]} or more for a single item.")
+        end
+      end
+
+      # After test for working form and create action, ad sad path for invalid :percent and :bulk_amount, flash messages, form remaining filled out
+      # Should discounts be unique by amount for every merchant?
     end
   end
 end
