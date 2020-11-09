@@ -79,11 +79,30 @@ describe 'New Bulk Discount Page:' do
         expect(page).to have_content("Percent is not a number.")
         expect(page).to have_field(:discount_percent, with: percent[:letter])
         expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:valid])
-        # Invalid bulk_amount (including non numbers)
 
+        # Invalid bulk_amount (including non numbers)
+        fill_in :discount_percent, with: percent[:valid]
+        fill_in :discount_bulk_amount, with: bulk_amount[:too_low]
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("Bulk amount must be greater than 0.")
+        expect(page).to have_field(:discount_percent, with: percent[:valid])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:too_low])
+
+        fill_in :discount_bulk_amount, with: bulk_amount[:negative]
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("Bulk amount must be greater than 0.")
+        expect(page).to have_field(:discount_percent, with: percent[:valid])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:negative])
+
+        fill_in :discount_bulk_amount, with: bulk_amount[:letter]
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("Bulk amount is not a number.")
+        expect(page).to have_field(:discount_percent, with: percent[:valid])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:letter])
       end
-      # After test for working form and create action, ad sad path for invalid :percent and :bulk_amount, flash messages, form remaining filled out
-      # Should discounts be unique by amount for every merchant?
     end
   end
 end
