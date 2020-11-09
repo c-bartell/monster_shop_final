@@ -103,6 +103,31 @@ describe 'New Bulk Discount Page:' do
         expect(page).to have_field(:discount_percent, with: percent[:valid])
         expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:letter])
       end
+
+      it "If I try to create a discount with the same percent, bulk_amount, or both, as another discount, I am returned to the form and see a message" do
+        discount_1 = @merchant_1.discounts.create!(percent: 5, bulk_amount: 20)
+
+        fill_in :discount_percent, with: discount_1.percent
+        fill_in :discount_bulk_amount, with: 5
+
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+
+        fill_in :discount_percent, with: discount_1.percent
+        fill_in :discount_bulk_amount, with: discount_1.percent
+
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+
+        fill_in :discount_percent, with: 6
+        fill_in :discount_bulk_amount, with: discount_1.percent
+
+        click_button 'Create Bulk Discount'
+
+        expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+      end
     end
   end
 end
