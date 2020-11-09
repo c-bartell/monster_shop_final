@@ -26,7 +26,7 @@ describe 'Bulk Discounts Index Page:' do
 
     describe 'When I visit my bulk discounts index' do
       before :each do
-        visit '/merchant/discounts'
+        visit merchant_discounts_path
       end
 
       it 'I see a list of all bulk discounts for my merchant' do
@@ -39,9 +39,9 @@ describe 'Bulk Discounts Index Page:' do
       end
 
       it 'I see a link to create a new bulk discount' do
-        click_link("Create Bulk Discount")
-        
-        expect(current_path).to eq('/merchant/discounts/new')
+        click_link("New Bulk Discount")
+
+        expect(current_path).to eq(new_merchant_discount_path)
       end
     end
   end
