@@ -74,6 +74,71 @@ describe 'Bulk Discount Edit page' do
         expect(current_path).to eq(merchant_discounts_path)
         expect(page).to_not have_content("Percent has already been taken and bulk amount has already been taken.")
       end
+
+      it 'If I fill out the form with invalid percent or bulk_amount, or if I leave a field blank, I am returned to the form, where I see an error message and the data that I filled in' do
+        percent = { too_high: 100, too_low: 0, negative: -1, letter: 'A', valid: 6 }
+        bulk_amount = { too_low: 0, negative: -1, letter: 'A', valid: 30 }
+
+        # All fields blank
+        fill_in :discount_percent, with: ''
+        fill_in :discount_bulk_amount, with: ''
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Percent can't be blank, percent is not a number, bulk amount can't be blank, and bulk amount is not a number.")
+
+        # Invalid percent (including non numbers)
+        fill_in :discount_bulk_amount, with: bulk_amount[:valid]
+        fill_in :discount_percent, with: percent[:too_high]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Percent must be less than 100.")
+        expect(page).to have_field(:discount_percent, with: percent[:too_high])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:valid])
+
+        fill_in :discount_percent, with: percent[:too_low]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Percent must be greater than 0.")
+        expect(page).to have_field(:discount_percent, with: percent[:too_low])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:valid])
+
+        fill_in :discount_percent, with: percent[:negative]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Percent must be greater than 0.")
+        expect(page).to have_field(:discount_percent, with: percent[:negative])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:valid])
+
+        fill_in :discount_percent, with: percent[:letter]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Percent is not a number.")
+        expect(page).to have_field(:discount_percent, with: percent[:letter])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:valid])
+
+        # Invalid bulk_amount (including non numbers)
+        fill_in :discount_percent, with: percent[:valid]
+        fill_in :discount_bulk_amount, with: bulk_amount[:too_low]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Bulk amount must be greater than 0.")
+        expect(page).to have_field(:discount_percent, with: percent[:valid])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:too_low])
+
+        fill_in :discount_bulk_amount, with: bulk_amount[:negative]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Bulk amount must be greater than 0.")
+        expect(page).to have_field(:discount_percent, with: percent[:valid])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:negative])
+
+        fill_in :discount_bulk_amount, with: bulk_amount[:letter]
+        click_button 'Update Bulk Discount'
+
+        expect(page).to have_content("Bulk amount is not a number.")
+        expect(page).to have_field(:discount_percent, with: percent[:valid])
+        expect(page).to have_field(:discount_bulk_amount, with: bulk_amount[:letter])
+      end
     end
   end
 end
