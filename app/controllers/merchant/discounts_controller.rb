@@ -23,7 +23,12 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   def update
     discount.update(discount_params)
-    redirect_to merchant_discounts_path
+    if discount.save
+      redirect_to merchant_discounts_path
+    else
+      flash[:errors] = discount.errors.full_messages.to_sentence.capitalize + '.'
+      render :edit
+    end
   end
 
   private
