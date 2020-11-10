@@ -6,5 +6,6 @@
   <%= content_tag :br %>
   <%= f.label :bulk_amount, "Order Amount:" %>
   <%= f.number_field :bulk_amount %>
+  <%= f.hidden_field :merchant_id, value: current_user.merchant_id %>
   <%= f.submit "Create Bulk Discount" %>
 <% end %>

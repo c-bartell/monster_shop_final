@@ -8,9 +8,9 @@ class Merchant::DiscountsController < Merchant::BaseController
   end
 
   def create
-    @discount = current_user.merchant.discounts.new(discount_params)
+    @discount = Discount.new(discount_params)
     if @discount.conflict?
-      flash[:errors] = "A discount with this percent and/or bulk amount already exists."
+      flash.now[:errors] = "A discount with this percent and/or bulk amount already exists."
       render :new
     elsif @discount.save
       redirect_to merchant_discounts_path
@@ -22,6 +22,6 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   private
   def discount_params
-    params.require(:discount).permit(:percent, :bulk_amount)
+    params.require(:discount).permit(:percent, :bulk_amount, :merchant_id)
   end
 end

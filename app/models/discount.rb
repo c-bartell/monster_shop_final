@@ -5,10 +5,9 @@ class Discount < ApplicationRecord
   validates :bulk_amount, presence: true, numericality: { greater_than: 0 }
 
   def conflict?
-    if Discount.where(percent: self.percent).or(Discount.where(bulk_amount: self.bulk_amount)) != []
-      true
-    else
-      false
-    end
+    merchant = self.merchant
+    query = merchant.discounts.where(percent: self.percent).or(merchant.discounts.where(bulk_amount: self.bulk_amount))
+
+    query != []
   end
 end
