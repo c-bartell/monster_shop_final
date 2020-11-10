@@ -59,7 +59,7 @@ describe 'Bulk Discounts Index Page:' do
           click_link 'Edit Bulk Discount'
         end
 
-        expect(current_path).to eq("/merchant/discounts/#{@discount_2.id}/edit")
+        expect(current_path).to eq(edit_merchant_discount_path(@discount_2))
       end
     end
   end
