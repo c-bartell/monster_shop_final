@@ -9,12 +9,7 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   def create
     @discount = Discount.new(discount_params)
-    if @discount.save
-      redirect_to merchant_discounts_path
-    else
-      flash[:errors] = @discount.errors.full_messages.to_sentence.capitalize + '.'
-      render :new
-    end
+    validate_record(:new)
   end
 
   def edit
@@ -23,12 +18,7 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   def update
     discount.update(discount_params)
-    if discount.save
-      redirect_to merchant_discounts_path
-    else
-      flash[:errors] = discount.errors.full_messages.to_sentence.capitalize + '.'
-      render :edit
-    end
+    validate_record(:edit)
   end
 
   private
@@ -38,5 +28,14 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   def discount
     @discount ||= Discount.find(params[:id])
+  end
+
+  def validate_record(endpoint)
+    if discount.save
+      redirect_to merchant_discounts_path
+    else
+      flash[:errors] = discount.errors.full_messages.to_sentence.capitalize + '.'
+      render endpoint
+    end
   end
 end
