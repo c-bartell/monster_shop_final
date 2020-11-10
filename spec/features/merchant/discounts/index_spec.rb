@@ -35,6 +35,11 @@ describe 'Bulk Discounts Index Page:' do
             expect(page).to have_content("Discount #{@discount_1.id}:")
             expect(page).to have_content("#{@discount_1.percent}% off quantities of #{@discount_1.bulk_amount} or more for a single item.")
           end
+
+          within "#discount-#{@discount_2.id}" do
+            expect(page).to have_content("Discount #{@discount_2.id}:")
+            expect(page).to have_content("#{@discount_2.percent}% off quantities of #{@discount_2.bulk_amount} or more for a single item.")
+          end
         end
       end
 
@@ -42,6 +47,19 @@ describe 'Bulk Discounts Index Page:' do
         click_link("New Bulk Discount")
 
         expect(current_path).to eq(new_merchant_discount_path)
+      end
+
+      it 'Next to each discount, I see a link to edit that discount, which takes me to an edit discount form' do
+        within "#discount-#{@discount_1.id}" do
+          expect(page).to have_link('Edit Bulk Discount')
+        end
+
+        within "#discount-#{@discount_2.id}" do
+          expect(page).to have_link('Edit Bulk Discount')
+          click_link 'Edit Bulk Discount'
+        end
+
+        expect(current_path).to eq("/merchant/discounts/#{@discount_2.id}/edit")
       end
     end
   end
