@@ -9,10 +9,7 @@ class Merchant::DiscountsController < Merchant::BaseController
 
   def create
     @discount = Discount.new(discount_params)
-    if @discount.conflict?
-      flash.now[:errors] = "A discount with this percent and/or bulk amount already exists."
-      render :new
-    elsif @discount.save
+    if @discount.save
       redirect_to merchant_discounts_path
     else
       flash[:errors] = @discount.errors.full_messages.to_sentence.capitalize + '.'

@@ -15,22 +15,6 @@ RSpec.describe Discount do
   end
 
   describe 'Instance Methods' do
-    it '#conflict?' do
-      merchant_1 = Merchant.create!(name: 'Megans Marmalades', address: '123 Main St', city: 'Denver', state: 'CO', zip: 80218)
-      merchant_2 = Merchant.create!(name: 'Brians Bagels', address: '125 Main St', city: 'Denver', state: 'CO', zip: 80218)
-      discount_1 = merchant_1.discounts.create!(percent: 5, bulk_amount: 20)
-      discount_2 = merchant_2.discounts.create!(percent: 10, bulk_amount: 30)
-      new_discount_1 = merchant_1.discounts.new(percent: 5, bulk_amount: 20)
-      new_discount_2 = merchant_1.discounts.new(percent: 5, bulk_amount: 30)
-      new_discount_3 = merchant_1.discounts.new(percent: 10, bulk_amount: 20)
-      new_discount_4 = merchant_1.discounts.new(percent: 10, bulk_amount: 30)
-      new_discount_5 = merchant_2.discounts.new(percent: 10, bulk_amount: 30)
 
-      expect(new_discount_1.conflict?).to be(true)
-      expect(new_discount_2.conflict?).to be(true)
-      expect(new_discount_3.conflict?).to be(true)
-      expect(new_discount_4.conflict?).to be(false)
-      expect(new_discount_5.conflict?).to be(true)
-    end
   end
 end

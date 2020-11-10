@@ -114,21 +114,21 @@ describe 'New Bulk Discount Page:' do
 
         click_button 'Create Bulk Discount'
 
-        expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+        expect(page).to have_content("Percent has already been taken.")
 
         fill_in :discount_percent, with: discount_1.percent
         fill_in :discount_bulk_amount, with: discount_1.bulk_amount
 
         click_button 'Create Bulk Discount'
 
-        expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+        expect(page).to have_content("Percent has already been taken and bulk amount has already been taken.")
 
         fill_in :discount_percent, with: discount_2.percent
         fill_in :discount_bulk_amount, with: discount_1.bulk_amount
 
         click_button 'Create Bulk Discount'
 
-        expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+        expect(page).to have_content("Bulk amount has already been taken.")
 
         fill_in :discount_percent, with: discount_2.percent
         fill_in :discount_bulk_amount, with: discount_2.bulk_amount
