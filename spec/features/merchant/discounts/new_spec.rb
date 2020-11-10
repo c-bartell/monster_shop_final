@@ -3,6 +3,7 @@ require 'rails_helper'
 describe 'New Bulk Discount Page:' do
   before :each do
     @merchant_1 = Merchant.create!(name: 'Megans Marmalades', address: '123 Main St', city: 'Denver', state: 'CO', zip: 80218)
+    @merchant_2 = Merchant.create!(name: 'Brians Bagels', address: '125 Main St', city: 'Denver', state: 'CO', zip: 80218)
     @m_user = @merchant_1.users.create(name: 'Megan', address: '123 Main St', city: 'Denver', state: 'CO', zip: 80218, email: 'megan@example.com', password: 'securepassword')
     @ogre = @merchant_1.items.create!(name: 'Ogre', description: "I'm an Ogre!", price: 20.25, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 5 )
     @giant = @merchant_1.items.create!(name: 'Giant', description: "I'm a Giant!", price: 50, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 3 )
@@ -106,27 +107,36 @@ describe 'New Bulk Discount Page:' do
 
       it "If I try to create a discount with the same percent, bulk_amount, or both, as another discount, I am returned to the form and see a message" do
         discount_1 = @merchant_1.discounts.create!(percent: 5, bulk_amount: 20)
+        discount_2 = @merchant_2.discounts.create!(percent: 6, bulk_amount: 30)
 
         fill_in :discount_percent, with: discount_1.percent
-        fill_in :discount_bulk_amount, with: 5
+        fill_in :discount_bulk_amount, with: discount_2.bulk_amount
 
         click_button 'Create Bulk Discount'
 
         expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
 
         fill_in :discount_percent, with: discount_1.percent
-        fill_in :discount_bulk_amount, with: discount_1.percent
+        fill_in :discount_bulk_amount, with: discount_1.bulk_amount
 
         click_button 'Create Bulk Discount'
 
         expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
 
-        fill_in :discount_percent, with: 6
-        fill_in :discount_bulk_amount, with: discount_1.percent
+        fill_in :discount_percent, with: discount_2.percent
+        fill_in :discount_bulk_amount, with: discount_1.bulk_amount
 
         click_button 'Create Bulk Discount'
 
         expect(page).to have_content("A discount with this percent and/or bulk amount already exists.")
+
+        fill_in :discount_percent, with: discount_2.percent
+        fill_in :discount_bulk_amount, with: discount_2.bulk_amount
+
+        click_button 'Create Bulk Discount'
+
+        expect(current_path).to eq(merchant_discounts_path)
+        expect(page).to_not have_content("A discount with this percent and/or bulk amount already exists.")
       end
     end
   end
