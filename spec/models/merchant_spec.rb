@@ -5,7 +5,7 @@ RSpec.describe Merchant do
     it {should have_many :items}
     it {should have_many(:order_items).through(:items)}
     it {should have_many :users}
-    it { should have_many :discounts }
+    it { should have_many(:discounts).dependent(:destroy) }
   end
 
   describe 'Validations' do
