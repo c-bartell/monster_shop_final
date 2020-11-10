@@ -1,11 +1,10 @@
 <%= content_tag :h1, "Edit Bulk Discount ##{@discount.id}" %>
 
-<%= form_with model: @discount, url: '/merchant/discounts' do |f| %>
+<%= form_with model: @discount, url: merchant_discount_path(@discount) do |f| %>
   <%= f.label :percent, "Percent Off:" %>
   <%= f.number_field :percent %>
   <%= content_tag :br %>
   <%= f.label :bulk_amount, "Order Amount:" %>
   <%= f.number_field :bulk_amount %>
-  <%= f.hidden_field :merchant_id, value: current_user.merchant_id %>
   <%= f.submit "Update Bulk Discount" %>
 <% end %>
