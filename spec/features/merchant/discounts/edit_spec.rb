@@ -23,6 +23,24 @@ describe 'Bulk Discount Edit page' do
         expect(page).to have_field(:discount_bulk_amount, with: @discount_1.bulk_amount)
         expect(page).to have_button('Update Bulk Discount')
       end
+
+      it 'When I change an attribute and click "Update Bulk Discount", the discount is updatedn and I am taken back to the discounts index, where I see the updated info' do
+        updated_percent = 6
+        updated_bulk_amount = 21
+
+        fill_in :discount_percent, with: updated_percent
+        fill_in :discount_bulk_amount, with: updated_bulk_amount
+        click_button 'Update Bulk Discount'
+
+        expect(@discount_1.percent).to eq(updated_percent)
+        expect(@discount_1.bulk_amount).to eq(updated_bulk_amount)
+        expect(current_path).to eq(merchant_discounts_path)
+
+        within "#discount-#{@discount_1.id}" do
+          expect(page).to have_content("Discount #{@discount_1.id}:")
+          expect(page).to have_content("#{updated_percent}% off quantities of #{updated_bulk_amount} or more for a single item.")
+        end
+      end
     end
   end
 end
