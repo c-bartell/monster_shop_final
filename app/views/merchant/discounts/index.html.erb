@@ -7,7 +7,7 @@
     <%= content_tag :li, id: "discount-#{discount.id}" do %>
        <%= "Discount #{discount.id}:" %><%= content_tag :br %>
        <%= "#{discount.percent}% off quantities of #{discount.bulk_amount} or more for a single item." %><%= content_tag :br %>
-       <%= link_to "Edit Bulk Discount", edit_merchant_discount_path(discount) %>
+       <%= link_to 'Edit Bulk Discount', edit_merchant_discount_path(discount) %><%= ' | ' %><%= link_to 'Delete Bulk Discount', delete_merchant_discount_path(discount), method: :delete %>
     <% end %>
   <% end %>
 <% end %>

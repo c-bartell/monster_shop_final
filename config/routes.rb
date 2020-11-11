@@ -43,6 +43,9 @@ Rails.application.routes.draw do
     patch '/discounts/:id', to: 'discounts#update', as: 'discount'
   end
 
+  # This is gross. Refactor it.
+  delete 'merchant/discounts/:id', to: 'merchant/discounts#destroy', as: 'delete_merchant_discount'
+
   namespace :admin do
     get '/', to: 'dashboard#index', as: :dashboard
     resources :merchants, only: [:show, :update]

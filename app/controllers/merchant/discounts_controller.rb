@@ -21,6 +21,11 @@ class Merchant::DiscountsController < Merchant::BaseController
     validate_record(:edit)
   end
 
+  def destroy
+    discount.destroy
+    redirect_to merchant_discounts_path
+  end
+
   private
   def discount_params
     params.require(:discount).permit(:percent, :bulk_amount, :merchant_id)

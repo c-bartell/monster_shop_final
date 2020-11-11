@@ -61,6 +61,16 @@ describe 'Bulk Discounts Index Page:' do
 
         expect(current_path).to eq(edit_merchant_discount_path(@discount_2))
       end
+
+      it 'Next to each discount, I see a link to delete that discount' do
+        within "#discount-#{@discount_1.id}" do
+          expect(page).to have_link('Delete Bulk Discount')
+        end
+
+        within "#discount-#{@discount_2.id}" do
+          expect(page).to have_link('Delete Bulk Discount')
+        end
+      end
     end
   end
 end
