@@ -12,6 +12,10 @@ RSpec.describe Cart do
         @ogre.id.to_s => 1,
         @giant.id.to_s => 2
         })
+      @discount_1 = @megan.discounts.create!(percent: 25, bulk_amount: 20)
+      @discount_2 = @megan.discounts.create!(percent: 20, bulk_amount: 21)
+      @discount_3 = @megan.discounts.create!(percent: 50, bulk_amount: 40)
+      @discount_4 = @brian.discounts.create!(percent: 50, bulk_amount: 30)
     end
 
     it '.contents' do
@@ -41,6 +45,13 @@ RSpec.describe Cart do
 
     it '.grand_total' do
       expect(@cart.grand_total).to eq(120)
+
+      @ogre.update!(inventory: 100)
+      new_cart = Cart.new({
+        @ogre.id.to_s => 20,
+        @giant.id.to_s => 2
+        })
+      expect(new_cart.grand_total).to eq(400)
     end
 
     it '.count_of()' do
@@ -51,6 +62,12 @@ RSpec.describe Cart do
     it '.subtotal_of()' do
       expect(@cart.subtotal_of(@ogre.id)).to eq(20)
       expect(@cart.subtotal_of(@giant.id)).to eq(100)
+
+      @ogre.update!(inventory: 100)
+      new_cart = Cart.new({
+        @ogre.id.to_s => 20
+        })
+      expect(new_cart.subtotal_of(@ogre.id)).to eq(300)
     end
 
     it '.limit_reached?()' do
