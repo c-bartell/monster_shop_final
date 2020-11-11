@@ -29,4 +29,26 @@ class Item < ApplicationRecord
   def average_rating
     reviews.average(:rating)
   end
+
+  def bulk_discount(amount)
+    self.merchant.discounts.where('bulk_amount <= ?', amount).order(percent: :desc).first
+  end
+
+  def discount(amount)
+    discount_object = bulk_discount(amount)
+    discount_object.percent if discount_object
+  end
+
+  def bulk_price(amount)
+    discount = bulk_discount(amount)
+    if discount
+      self.price * (1.0 - (discount.percent / 100.0))
+    else
+      self.price
+    end
+  end
+
+  def subtotal(amount)
+    bulk_price(amount) * amount
+  end
 end
