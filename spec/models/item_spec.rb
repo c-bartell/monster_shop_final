@@ -19,8 +19,10 @@ RSpec.describe Item do
   describe 'Instance Methods' do
     before :each do
       @megan = Merchant.create!(name: 'Megans Marmalades', address: '123 Main St', city: 'Denver', state: 'CO', zip: 80218)
+      @brian = Merchant.create!(name: 'Brians Bagels', address: '125 Main St', city: 'Denver', state: 'CO', zip: 80218)
       @ogre = @megan.items.create!(name: 'Ogre', description: "I'm an Ogre!", price: 20, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 5 )
       @giant = @megan.items.create!(name: 'Giant', description: "I'm a Giant!", price: 20, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 5 )
+      @xenomorph = @megan.items.create!(name: 'Xenomorph', description: "Pharyngeal jaws and acid blood!", price: 100, image: 'https://img.particlenews.com/img/id/3ZsdMI_0PFEZ9Ig00?type=thumbnail_512x288', active: true, inventory: 5 )
       @review_1 = @ogre.reviews.create(title: 'Great!', description: 'This Ogre is Great!', rating: 5)
       @review_2 = @ogre.reviews.create(title: 'Meh.', description: 'This Ogre is Mediocre', rating: 3)
       @review_3 = @ogre.reviews.create(title: 'EW', description: 'This Ogre is Ew', rating: 1)
@@ -36,6 +38,25 @@ RSpec.describe Item do
 
     it '.average_rating' do
       expect(@ogre.average_rating.round(2)).to eq(3.00)
+    end
+
+    it '#bulk_price' do
+      discount_1 = @megan.discounts.create!(percent: 25, bulk_amount: 20)
+      discount_2 = @megan.discounts.create!(percent: 20, bulk_amount: 21)
+      discount_3 = @megan.discounts.create!(percent: 50, bulk_amount: 40)
+      discount_4 = @brian.discounts.create!(percent: 50, bulk_amount: 30)
+
+      expect(@xenomorph.bulk_price(1)).to eq(@xenomorph.price)
+      expect(@xenomorph.bulk_price(19)).to eq(@xenomorph.price)
+      expect(@xenomorph.bulk_price(20)).to eq(@xenomorph.price * ((100 - discount_1.percent) / 100.0))
+      expect(@xenomorph.bulk_price(21)).to_not eq(@xenomorph.price * ((100 - discount_2.percent) / 100.0))
+      expect(@xenomorph.bulk_price(29)).to eq(@xenomorph.price * ((100 - discount_1.percent) / 100.0))
+      expect(@xenomorph.bulk_price(30)).to_not eq(@xenomorph.price * ((100 - discount_4.percent) / 100.0))
+      expect(@xenomorph.bulk_price(39)).to eq(@xenomorph.price * ((100 - discount_1.percent) / 100.0))
+      expect(@xenomorph.bulk_price(40)).to eq(@xenomorph.price * ((100 - discount_3.percent) / 100.0))
+      expect(@xenomorph.bulk_price(100)).to eq(@xenomorph.price * ((100 - discount_3.percent) / 100.0))
+      expect(@xenomorph.bulk_price(1_000_000)).to eq(@xenomorph.price * ((100 - discount_3.percent) / 100.0))
+
     end
   end
 
