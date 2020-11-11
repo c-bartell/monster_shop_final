@@ -202,7 +202,7 @@ RSpec.describe 'Cart Show Page' do
         visit '/cart'
 
         expect(page).to have_content("Total: #{number_to_currency((@ogre.bulk_price(20) * 20) + (@hippo.price * 1))}")
-save_and_open_page
+
         within "#item-#{@ogre.id}" do
           expect(page).to have_content("Price: #{number_to_currency(@ogre.bulk_price(20))}")
           expect(page).to have_content("Subtotal: #{number_to_currency(@ogre.bulk_price(20) * 20)}")
