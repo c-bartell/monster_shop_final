@@ -10,6 +10,10 @@ RSpec.describe 'Order Show Page' do
       @ogre = @megan.items.create!(name: 'Ogre', description: "I'm an Ogre!", price: 20.25, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 5 )
       @giant = @megan.items.create!(name: 'Giant', description: "I'm a Giant!", price: 50, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 3 )
       @hippo = @brian.items.create!(name: 'Hippo', description: "I'm a Hippo!", price: 50, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaLM_vbg2Rh-mZ-B4t-RSU9AmSfEEq_SN9xPP_qrA2I6Ftq_D9Qw', active: true, inventory: 1 )
+      @discount_1 = @megan.discounts.create!(percent: 25, bulk_amount: 20)
+      @discount_2 = @megan.discounts.create!(percent: 20, bulk_amount: 21)
+      @discount_3 = @megan.discounts.create!(percent: 50, bulk_amount: 40)
+      @discount_4 = @brian.discounts.create!(percent: 50, bulk_amount: 30)
       @user = User.create!(name: 'Megan', address: '123 Main St', city: 'Denver', state: 'CO', zip: 80218, email: 'megan_1@example.com', password: 'securepassword')
       @order_1 = @user.orders.create!(status: "packaged")
       @order_2 = @user.orders.create!(status: "pending")
@@ -81,6 +85,30 @@ RSpec.describe 'Order Show Page' do
       expect(@order_item_3.fulfilled).to eq(false)
       expect(@giant.inventory).to eq(5)
       expect(@ogre.inventory).to eq(7)
+    end
+
+    it 'Orders with bulk discounted items show the discounted item price, subtotal, and grand total' do
+      @ogre.update!(inventory: 100)
+
+      @discount_1.bulk_amount.times do
+        visit item_path(@ogre)
+        click_button 'Add to Cart'
+      end
+
+      visit '/cart'
+      click_button 'Check Out'
+
+      discount_order = Order.last
+      order_item = discount_order.order_items.first
+
+      visit "/profile/orders/#{discount_order.id}"
+
+      expect(page).to have_content("Total: #{number_to_currency(@ogre.subtotal(order_item.quantity))}")
+
+      within "#order-item-#{order_item.id}" do
+        expect(page).to have_content(number_to_currency(@ogre.bulk_price(order_item.quantity)))
+        expect(page).to have_content(number_to_currency(@ogre.subtotal(order_item.quantity)))
+      end
     end
   end
 end
