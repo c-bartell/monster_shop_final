@@ -25,7 +25,7 @@ describe 'Merchants can delete Bulk Orders:' do
           expect(Discount.exists?(discount_1_id)).to be(true)
 
           within "#discount-#{discount_1_id}" do
-            click_link 'Delete Bulk Discount', wait: 5
+            click_link 'Delete Bulk Discount'
           end
 
           expect(Discount.exists?(discount_1_id)).to be(false)
