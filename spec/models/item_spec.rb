@@ -69,6 +69,19 @@ RSpec.describe Item do
       expect(@xenomorph.subtotal(100)).to eq(100 * @xenomorph.price * ((100 - @discount_3.percent) / 100.0))
       expect(@xenomorph.subtotal(1_000_000)).to eq(1_000_000 * @xenomorph.price * ((100 - @discount_3.percent) / 100.0))
     end
+
+    it '#bulk_discount' do
+      expect(@xenomorph.bulk_discount(1)).to eq(nil)
+      expect(@xenomorph.bulk_discount(19)).to eq(nil)
+      expect(@xenomorph.bulk_discount(20)).to eq(@discount_1)
+      expect(@xenomorph.bulk_discount(21)).to_not eq(@discount_2)
+      expect(@xenomorph.bulk_discount(29)).to eq(@discount_1)
+      expect(@xenomorph.bulk_discount(30)).to_not eq(@discount_4)
+      expect(@xenomorph.bulk_discount(39)).to eq(@discount_1)
+      expect(@xenomorph.bulk_discount(40)).to eq(@discount_3)
+      expect(@xenomorph.bulk_discount(100)).to eq(@discount_3)
+      expect(@xenomorph.bulk_discount(1_000_000)).to eq(@discount_3)
+    end
   end
 
   describe 'Class Methods' do
