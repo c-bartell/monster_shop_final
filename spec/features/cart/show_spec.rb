@@ -172,7 +172,7 @@ RSpec.describe 'Cart Show Page' do
         expect(page).to have_content("Cart: 0")
       end
 
-      it 'When there is enough of a single item in my cart for that item (only) to qualify for a bulk discount, the total an d subtotal are adjusted accordingly' do
+      it 'When there is enough of a single item in my cart for that item (only) to qualify for a bulk discount, the total an d subtotal are adjusted accordingly, and I see the dicount with the item' do
         @ogre.update!(inventory: 100)
         visit item_path(@hippo)
         click_button 'Add to Cart'
@@ -206,6 +206,7 @@ RSpec.describe 'Cart Show Page' do
         within "#item-#{@ogre.id}" do
           expect(page).to have_content("Price: #{number_to_currency(@ogre.bulk_price(20))}")
           expect(page).to have_content("Subtotal: #{number_to_currency(@ogre.bulk_price(20) * 20)}")
+          expect(page).to have_content("A bulk discount of #{@ogre.discount.percent}% has been applied to #{@ogre.name}!")
         end
 
         within "#item-#{@hippo.id}" do
