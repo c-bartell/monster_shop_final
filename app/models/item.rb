@@ -38,4 +38,8 @@ class Item < ApplicationRecord
       self.price
     end
   end
+
+  def subtotal(amount)
+    bulk_price(amount) * amount
+  end
 end
