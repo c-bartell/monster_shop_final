@@ -82,6 +82,19 @@ RSpec.describe Item do
       expect(@xenomorph.bulk_discount(100)).to eq(@discount_3)
       expect(@xenomorph.bulk_discount(1_000_000)).to eq(@discount_3)
     end
+
+    it '#discount' do
+      expect(@xenomorph.discount(1)).to eq(nil)
+      expect(@xenomorph.discount(19)).to eq(nil)
+      expect(@xenomorph.discount(20)).to eq(@discount_1.percent)
+      expect(@xenomorph.discount(21)).to_not eq(@discount_2.percent)
+      expect(@xenomorph.discount(29)).to eq(@discount_1.percent)
+      expect(@xenomorph.discount(30)).to_not eq(@discount_4.percent)
+      expect(@xenomorph.discount(39)).to eq(@discount_1.percent)
+      expect(@xenomorph.discount(40)).to eq(@discount_3.percent)
+      expect(@xenomorph.discount(100)).to eq(@discount_3.percent)
+      expect(@xenomorph.discount(1_000_000)).to eq(@discount_3.percent)
+    end
   end
 
   describe 'Class Methods' do
